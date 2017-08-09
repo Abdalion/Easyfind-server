@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var morgan = require('morgan');
 var mongoose = require('mongoose');
+var mysql = require('mysql');
 var passport = require('passport');
 var bodyParser = require('body-parser');
 var flash = require('connect-flash');
@@ -13,6 +14,7 @@ var flash = require('connect-flash');
 
 var configDB = require('./config/database.js');
 mongoose.connect(configDB.url);
+
 require('./config/passport')(passport);
 
 app.use(morgan('dev'));

@@ -22,10 +22,22 @@ module.exports = (app, passport) => {
     res.redirect('/')
   })
 
-  app.post('/api/user', passport.authenticate('local-finduser', { session: false }),
-  function(req, res) {
-    res.json({ username: req.user.username, location: req.user.location });
+  // app.get('/api/user/:userid', passport.authenticate('local-finduser', { session: false }),
+  // function(req, res) {
+  //   console.log('returning user');
+  //   res.json({ username: req.user.username, location: req.user.location });
+  // });
+
+
+  app.get('/api/user/:mail', isLoggedIn, (req, res) => {
+    res.json({user: req.user});
   });
+
+  app.post('/api/signup', passport.authenticate('local-signup', {
+    successRedirect: '/api/success',
+    failureRedirect: '/api/failure',
+    failureFlash: true
+  }));
 
   app.post('/api/updateLocation', passport.authenticate('local-updateLocation', { session: false }));
 
@@ -33,15 +45,9 @@ module.exports = (app, passport) => {
 
   app.post('/api/addFollowed', passport.authenticate('local-addFollowed', { session: false }));
 
-  // app.post('/api/login', passport.authenticate('local-login', {
-  //   successRedirect: '/profile',
-  //   failureRedirect: '/login',
-	// 	failureFlash: true
-  // }));
-
-  app.post('/api/signup', passport.authenticate('local-signup', {
-    successRedirect: '/api/success',
-    failureRedirect: '/api/failure',
+  app.post('/api/login', passport.authenticate('local-login', {
+    successRedirect: '/profile',
+    failureRedirect: '/login',
 		failureFlash: true
   }));
 
@@ -59,6 +65,9 @@ function isLoggedIn(req, res, next) {
     if(req.isAuthenticated()) {
       return next();
     }
-
     res.redirect('/login');
+}
+
+function isFollower(req, res, next) {
+
 }

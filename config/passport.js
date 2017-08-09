@@ -15,6 +15,27 @@ module.exports = (passport) => {
     });
   });
 
+  passport.use('local-login', new localStrategy({
+      usernameField: 'email',
+      passwordField: 'password',
+      passReqToCallback: true
+    },
+    function(req, email, password, done){
+      process.nextTick(function(){
+        User.findOne({ 'local.username': email}, function(err, user){
+          if(err)
+            return done(err);
+          if(!user)
+            return done(null, false, req.flash('loginMessage', 'No User found'));
+          if(!user.validPassword(password)){
+            return done(null, false, req.flash('loginMessage', 'inavalid password'));
+          }
+          return done(null, user);
+        });
+      });
+    }
+  ));
+
   passport.use('local-signup', new localStrategy({
     usernameField : 'email',
     passwordField: 'password',
@@ -47,35 +68,14 @@ module.exports = (passport) => {
   }
 ));
 
-passport.use('local-login', new localStrategy({
+passport.use('local-finduser', new localStrategy({
     usernameField: 'email',
     passwordField: 'password',
     passReqToCallback: true
   },
   function(req, email, password, done){
-    process.nextTick(function(){
+    console.log(email + 'está buscando a ');
       User.findOne({ 'local.username': email}, function(err, user){
-        if(err)
-          return done(err);
-        if(!user)
-          return done(null, false, req.flash('loginMessage', 'No User found'));
-        if(!user.validPassword(password)){
-          return done(null, false, req.flash('loginMessage', 'inavalid password'));
-        }
-        return done(null, user);
-      });
-    });
-  }
-));
-
-passport.use('local-finduser', new localStrategy({
-    usernameField: 'email',
-    passwordField: 'password',
-    usernameToFind: 'usernameToFind',
-    passReqToCallback: true
-  },
-  function(req, email, password, userToFind, done){
-      User.findOne({ 'local.username': userToFind}, function(err, user){
         if(err)
           return done(err);
         if(!user)
