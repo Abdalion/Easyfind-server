@@ -20,7 +20,7 @@ require('./config/passport')(passport);
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(session({secret: 'hashkey@secretpassword-',
+app.use(session({secret: '',
                  saveUninitialized: true,
                  resave: true}));
 app.use(passport.initialize());
